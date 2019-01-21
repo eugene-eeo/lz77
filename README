@@ -1,0 +1,25 @@
+lz77.py
+=======
+
+2 main functions:
+
+    lz77(b, W, L)
+    -------------
+    Takes in a byte string b and encodes it using LZ77 with
+    window size W and lookahead-buffer of size L.
+
+
+    inflate(b, W, L)
+    ----------------
+    Takes in an lz77-encoded string b and decodes it into the
+    original byte-string. The W and L parameters must be the
+    same as those provided to lz77.
+
+Install + Usage example:
+
+    $ pip install bitarray==0.8.3
+    $ python
+    >>> from lz77 import lz77, inflate
+    >>> x = lz77(b'abracadabra', 100, 100)
+    >>> inflate(x, 100, 100)
+    b'abracadabra'
