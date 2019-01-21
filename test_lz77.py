@@ -32,8 +32,8 @@ text = (
 
 
 @pytest.mark.parametrize("x", [abracadabra, peter, shell, text])
-@pytest.mark.parametrize("W", [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 100])
-@pytest.mark.parametrize("L", [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 100])
+@pytest.mark.parametrize("W", [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 100, 127, 255, 511])
+@pytest.mark.parametrize("L", [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 100, 127, 255, 511])
 def test_inflate_deflate(x, W, L):
     b = x.encode('ascii')
     assert inflate(lz77(b, W, L), W, L) == b
