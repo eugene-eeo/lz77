@@ -15,9 +15,23 @@ peter = (
     'If Peter Piper picked a peck of pickled peppers, '
     "where's the peck of pickled peppers Peter Piper picked?"
     )
+text = (
+    'Unique New York. '
+    'Many an anemone sees an enemy anemone. '
+    'Freshly-fried flying fish. '
+    'She stood on the balcony, '
+    'inexplicably mimicking him hiccoughing, '
+    'and amicably welcoming him home. '
+    'Imagine an imaginary menagerie manager '
+    'imagining managing an imaginary menagerie. '
+    'The epitome of femininity. '
+    'A skunk sat on a stump and thunk the stump stunk, '
+    'but the stump thunk the skunk stunk. '
+    'Greek grapes.'
+    )
 
 
-@pytest.mark.parametrize("x", [abracadabra, peter, shell])
+@pytest.mark.parametrize("x", [abracadabra, peter, shell, text])
 @pytest.mark.parametrize("W", [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 100])
 @pytest.mark.parametrize("L", [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 100])
 def test_inflate_deflate(x, W, L):
