@@ -48,3 +48,14 @@ def test_inflate_deflate(impl, x, W, L):
 @pytest.mark.parametrize("x", corpus)
 def test_inflate_deflate_lz77_values(impl, x):
     test_inflate_deflate(impl, x, 65535, 255)
+
+
+@pytest.mark.parametrize("impl", [lz77, lzss])
+@pytest.mark.parametrize("b", [
+    open("corpus/mini-beers.txt", "rb").read(),
+    open("corpus/mini-names.txt", "rb").read(),
+    open("corpus/beers.txt", "rb").read(),
+    open("corpus/names.txt", "rb").read(),
+    ])
+def test_inflate_deflate_corpus(impl, b, W=255, L=255):
+    assert impl.inflate(impl.deflate(b, W, L), W, L) == b
