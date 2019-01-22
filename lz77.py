@@ -19,30 +19,27 @@ def keep_last_n(s, n):
 
 
 def encode_triplets(s, W, L):
-    window = b''
-    while s:
-        buffer = s[:L]
+    p = 0
+    n = len(s)
+    while p < n:
+        window = s[max(p-W,0):p]
+        buffer = s[p:p+L]
         length, pos = find_longest_prefix(buffer, window)
         if length is not None:
             i = len(window) - pos
             d = length
-            c = s[d] if len(s) > d else EOF
+            c = s[p+d] if len(s) > p+d else EOF
         else:
             i = 0
             d = 0
-            c = s[0]
+            c = s[p]
 
         yield (i, d, c)
-
-        # pop and maintain window
-        p = s[0:d+1]
-        s = s[d+1:]
-        window = keep_last_n(window + p, W)
+        p += d + 1
 
 
-def encode_int(n, N):
-    x = bin(n)[2:]
-    return bitarray(('0' * (N - len(x))) + x)
+def encode_int(n, width):
+    return "{n:0{width}b}".format(n=n, width=width)
 
 
 def lz77(s, W, L):
