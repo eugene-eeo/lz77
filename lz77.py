@@ -13,11 +13,6 @@ def find_longest_prefix(buffer, window):
     return None, -1
 
 
-def keep_last_n(s, n):
-    m = len(s)
-    return s[m-n:m]
-
-
 def encode_triplets(s, W, L):
     p = 0
     n = len(s)
@@ -59,14 +54,14 @@ def inflate_to_tuples(b, W, L):
     n = int(math.ceil(math.log2(1 + W)))
     m = int(math.ceil(math.log2(1 + L)))
     while b:
-        i = b[:n]; b = b[n:] # pos
-        d = b[:m]; b = b[m:] # length
-        c = b[:8]; b = b[8:] # char
-        i = int(i.to01(), base=2)
-        d = int(d.to01(), base=2)
-        c = (chr(int(c.to01(), base=2)).encode('ascii') if len(c) > 0 else
-             EOF)
-        yield i, d, c
+        i, b = b[:n].to01(), b[n:] # pos
+        d, b = b[:m].to01(), b[m:] # length
+        c, b = b[:8].to01(), b[8:] # char
+        yield (
+            int(i, base=2),
+            int(d, base=2),
+            chr(int(c, base=2)).encode('ascii') if c else EOF,
+        )
 
 
 def inflate(b, W, L):
