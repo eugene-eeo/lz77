@@ -6,7 +6,7 @@ EOF = object()
 
 
 def find_longest_prefix(buffer, window):
-    for i in range(len(buffer), 0, -1):
+    for i in range(min(len(buffer), len(window)), 0, -1):
         x = window.rfind(buffer[:i])
         if x != -1:
             return i, x

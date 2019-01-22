@@ -32,8 +32,11 @@ text = (
     )
 
 
+corpus = [abracadabra, peter, shell, text]
+
+
 @pytest.mark.parametrize("impl", [lz77, lzss])
-@pytest.mark.parametrize("x", [abracadabra, peter, shell, text])
+@pytest.mark.parametrize("x", corpus)
 @pytest.mark.parametrize("W", [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 100, 127, 255, 511])
 @pytest.mark.parametrize("L", [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 100, 127, 255, 511])
 def test_inflate_deflate(impl, x, W, L):
@@ -42,6 +45,6 @@ def test_inflate_deflate(impl, x, W, L):
 
 
 @pytest.mark.parametrize("impl", [lz77, lzss])
-@pytest.mark.parametrize("x", [abracadabra, peter, shell, text])
-def test_inflate_deflate_lz77_values(impl, x, W=65535, L=255):
-    test_inflate_deflate(impl, x, W, L)
+@pytest.mark.parametrize("x", corpus)
+def test_inflate_deflate_lz77_values(impl, x):
+    test_inflate_deflate(impl, x, 65535, 255)
