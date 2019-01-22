@@ -69,7 +69,7 @@ def inflate_to_tuples(b, W, L):
         yield (
             int(i, base=2),
             int(d, base=2),
-            chr(int(c, base=2)).encode('ascii') if c else EOF,
+            int(c, base=2) if c else EOF,
         )
 
 
@@ -82,6 +82,6 @@ def inflate(b, W, L, method=inflate_to_tuples):
         length += d
         if c is EOF:
             break
-        output += c
+        output += bytes([c])
         length += 1
     return output

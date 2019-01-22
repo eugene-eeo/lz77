@@ -35,7 +35,7 @@ def inflate_to_tuples(b, W, L):
         is_char = b[p]; p += 1 # is_char
         if is_char:
             c = b[p:p+8].to01(); p += 8
-            yield (0, 0, chr(int(c, base=2)).encode('ascii'))
+            yield 0, 0, int(c, base=2)
             continue
 
         i = b[p:p+n].to01(); p += n  # pos
@@ -44,7 +44,7 @@ def inflate_to_tuples(b, W, L):
         yield (
             int(i, base=2),
             int(d, base=2),
-            chr(int(c, base=2)).encode('ascii') if c else EOF,
+            int(c, base=2) if c else EOF,
         )
 
 

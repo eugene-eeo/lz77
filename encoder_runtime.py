@@ -4,7 +4,7 @@ from lz77 import inflate, deflate
 
 
 for filename in [
-        "corpus/mini-beers.txt",
+        #"corpus/mini-beers.txt",
         "corpus/mini-names.txt",
         "corpus/beers.txt",
         "corpus/names.txt",
