@@ -41,7 +41,7 @@ def encode_int(n, width):
     return "{n:0{width}b}".format(n=n, width=width)
 
 
-def lz77(s, W, L):
+def deflate(s, W, L):
     n = bits_needed(W)
     m = bits_needed(L)
     b = bitarray()
@@ -70,12 +70,15 @@ def inflate_to_tuples(b, W, L):
         )
 
 
-def inflate(b, W, L):
+def inflate(b, W, L, method=inflate_to_tuples):
+    length = 0
     output = b""
-    for i, d, c in inflate_to_tuples(b, W, L):
-        pos = len(output) - i
+    for i, d, c in method(b, W, L):
+        pos = length - i
         output += output[pos:pos+d]
+        length += d
         if c is EOF:
             break
         output += c
+        length += 1
     return output

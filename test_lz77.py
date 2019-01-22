@@ -1,5 +1,6 @@
 import pytest
-from lz77 import inflate, lz77
+import lz77
+import lzss
 
 
 abracadabra = "abracadabra"
@@ -31,14 +32,16 @@ text = (
     )
 
 
+@pytest.mark.parametrize("impl", [lz77, lzss])
 @pytest.mark.parametrize("x", [abracadabra, peter, shell, text])
 @pytest.mark.parametrize("W", [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 100, 127, 255, 511])
 @pytest.mark.parametrize("L", [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 100, 127, 255, 511])
-def test_inflate_deflate(x, W, L):
+def test_inflate_deflate(impl, x, W, L):
     b = x.encode('ascii')
-    assert inflate(lz77(b, W, L), W, L) == b
+    assert impl.inflate(impl.deflate(b, W, L), W, L) == b
 
 
+@pytest.mark.parametrize("impl", [lz77, lzss])
 @pytest.mark.parametrize("x", [abracadabra, peter, shell, text])
-def test_inflate_deflate_lz77_values(x, W=65535, L=255):
-    test_inflate_deflate(x, W, L)
+def test_inflate_deflate_lz77_values(impl, x, W=65535, L=255):
+    test_inflate_deflate(impl, x, W, L)
