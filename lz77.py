@@ -33,13 +33,17 @@ def encode_triplets(s, W, L):
         p += d + 1
 
 
+def bits_needed(x):
+    return int(math.ceil(math.log2(1 + x)))
+
+
 def encode_int(n, width):
     return "{n:0{width}b}".format(n=n, width=width)
 
 
 def lz77(s, W, L):
-    n = int(math.ceil(math.log2(1 + W)))
-    m = int(math.ceil(math.log2(1 + L)))
+    n = bits_needed(W)
+    m = bits_needed(L)
     b = bitarray()
     for i, d, c in encode_triplets(s, W, L):
         b.extend(encode_int(i, n))
@@ -51,12 +55,14 @@ def lz77(s, W, L):
 
 
 def inflate_to_tuples(b, W, L):
-    n = int(math.ceil(math.log2(1 + W)))
-    m = int(math.ceil(math.log2(1 + L)))
-    while b:
-        i, b = b[:n].to01(), b[n:] # pos
-        d, b = b[:m].to01(), b[m:] # length
-        c, b = b[:8].to01(), b[8:] # char
+    n = bits_needed(W)
+    m = bits_needed(L)
+    p = 0
+    l = len(b)
+    while p < l:
+        i = b[p:p+n].to01(); p += n  # pos
+        d = b[p:p+m].to01(); p += m  # length
+        c = b[p:p+8].to01(); p += 8  # char
         yield (
             int(i, base=2),
             int(d, base=2),
