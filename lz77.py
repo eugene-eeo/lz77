@@ -37,20 +37,23 @@ def bits_needed(x):
     return int(math.ceil(math.log2(1 + x)))
 
 
-def encode_int(n, width):
-    return "{n:0{width}b}".format(n=n, width=width)
+def make_encoder(width):
+    def encoder(n, fmt=("{n:0%db}" % width)):
+        return fmt.format(n=n)
+    return encoder
 
 
 def deflate(s, W, L):
-    n = bits_needed(W)
-    m = bits_needed(L)
+    encode_i = make_encoder(bits_needed(W))
+    encode_d = make_encoder(bits_needed(L))
+    encode_c = make_encoder(8)
     b = bitarray()
     for i, d, c in encode_triplets(s, W, L):
-        b.extend(encode_int(i, n))
-        b.extend(encode_int(d, m))
+        b.extend(encode_i(i))
+        b.extend(encode_d(d))
         if c is EOF:
             break
-        b.extend(encode_int(c, 8))
+        b.extend(encode_c(c))
     return b
 
 

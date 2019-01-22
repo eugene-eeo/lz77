@@ -1,12 +1,13 @@
 import math
 from bitarray import bitarray
 from functools import partial
-from lz77 import bits_needed, encode_triplets, EOF, encode_int, inflate
+from lz77 import bits_needed, encode_triplets, EOF, make_encoder, inflate
 
 
 def deflate(s, W, L):
-    n = bits_needed(W)
-    m = bits_needed(L)
+    encode_i = make_encoder(bits_needed(W))
+    encode_d = make_encoder(bits_needed(L))
+    encode_c = make_encoder(8)
     b = bitarray()
     for i, d, c in encode_triplets(s, W, L):
         is_char = i == 0 and d == 0
@@ -15,13 +16,13 @@ def deflate(s, W, L):
             # we never ever get is_char == True if c is an EOF.
             # c is only ever EOF if the last sequence can be found
             # in the sliding window.
-            b.extend(encode_int(c, 8))
+            b.extend(encode_c(c))
         else:
-            b.extend(encode_int(i, n))
-            b.extend(encode_int(d, m))
+            b.extend(encode_i(i))
+            b.extend(encode_d(d))
             if c is EOF:
                 break
-            b.extend(encode_int(c, 8))
+            b.extend(encode_c(c))
     return b
 
 
