@@ -1,32 +1,32 @@
-import sys
-import json
+import csv
 import time
-from lz77 import inflate, deflate
+from lz77 import deflate, inflate
 
+W = [50*i for i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]
+L = [50*i for i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]
+buf = open("corpus/beers.txt", mode="rb").read().splitlines()
+out = csv.writer(open("results/beers.csv", mode="w"))
+out.writerow(["W", "L", "Lines", "Compression Ratio", "Encode Time", "Decode Time"])
 
-for filename in [
-        "corpus/mini-beers.txt",
-        "corpus/mini-names.txt",
-        "corpus/beers.txt",
-        "corpus/names.txt",
-        ]:
-    buff = open(filename, "rb").read()
-    for W in [15, 63, 255, 1023, 4095, 65535]:
-        for L in [15, 31, 63, 127, 255, 511]:
-            print(filename, W, L, file=sys.stderr)
-            for i in range(100):
-                deflate_t0 = time.time()
-                x = deflate(buff, W=W, L=L)
-                deflate_t1 = time.time()
-                inflate_t0 = time.time()
-                inflate(x, W=W, L=L)
-                inflate_t1 = time.time()
-                x.fill()
-                print(json.dumps([
-                    filename,                  # filename
-                    W,                         # W
-                    L,                         # L
-                    (len(x) // 8) / len(buff), # compression ratio
-                    deflate_t1 - deflate_t0,   # deflate/encode time
-                    inflate_t1 - inflate_t0,   # inflate/decode time
-                ]))
+for w in W:
+    for l in L:
+        print(w, l)
+        for i in range(0, 101, 2):
+            if i == 0:
+                continue
+            b = b"\n".join(buf[:2*i])
+            deflate_t0 = time.time()
+            x = deflate(b, W=w, L=l)
+            deflate_t1 = time.time()
+            inflate_t0 = time.time()
+            inflate(x, W=w, L=l)
+            inflate_t1 = time.time()
+            x.fill()
+            out.writerow([
+                w,
+                l,
+                i,
+                (len(x) // 8) / len(b),
+                deflate_t1 - deflate_t0,
+                inflate_t1 - inflate_t0,
+            ])

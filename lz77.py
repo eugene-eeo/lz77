@@ -5,23 +5,34 @@ from bitarray import bitarray
 EOF = object()
 
 
-def find_longest_prefix(buffer, window):
-    for i in range(min(len(buffer), len(window)), 0, -1):
-        x = window.rfind(buffer[:i])
-        if x != -1:
-            return i, x
-    return None, -1
+def find_longest_prefix(b, buff, wind):
+    bl, bh = buff
+    wl, wh = wind
+    buffer = memoryview(b)[bl:bh]
+    maxlen = min(bh - bl, wh - wl)
+    lo = wl
+    for l in range(1, maxlen+1):
+        x = b.find(buffer[:l], lo, wh)
+        if x == -1:
+            if l == 1:
+                break
+            return l-1, b.rfind(buffer[:l-1], lo, wh) - wl
+        lo = x
+    else:
+        return maxlen, b.rfind(buffer[:maxlen], lo, wh) - wl
+    return None, 0
 
 
 def encode_triplets(s, W, L):
     p = 0
     n = len(s)
     while p < n:
-        window = s[max(p-W,0):p]
-        buffer = s[p:p+L]
-        length, pos = find_longest_prefix(buffer, window)
+        window = (max(p - W, 0), p)
+        buffer = (p, min(p + L, n))
+        length, pos = find_longest_prefix(s, buffer, window)
         if length is not None:
-            i = len(window) - pos
+            wl, wh = window
+            i = wh - wl - pos
             d = length
             c = s[p+d] if len(s) > p+d else EOF
         else:
