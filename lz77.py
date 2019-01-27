@@ -34,7 +34,7 @@ def encode_triplets(s, W, L):
             wl, wh = window
             i = wh - wl - pos
             d = length
-            c = s[p+d] if len(s) > p+d else EOF
+            c = s[p+d] if p+d < n else EOF
         else:
             i = 0
             d = 0
