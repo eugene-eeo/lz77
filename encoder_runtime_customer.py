@@ -2,6 +2,8 @@ import csv
 import time
 from lz77 import deflate, inflate
 
+# W => [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+
 P = [0.1 * i for i in range(1, 11)]
 W = [2**i-1 for i in [16]]
 L = [2**i-1 for i in [8]]

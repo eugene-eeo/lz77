@@ -1,7 +1,29 @@
 import math
 from bitarray import bitarray
 from functools import partial
-from lz77 import bits_needed, encode_triplets, EOF, make_encoder, inflate
+from lz77 import bits_needed, find_longest_prefix, EOF, make_encoder, inflate
+
+
+def encode_triplets(s, W, L):
+    p = 0
+    n = len(s)
+    break_even = (bits_needed(L) + bits_needed(W)) // 8 + 1
+    while p < n:
+        window = (max(p - W, 0), p)
+        buffer = (p, min(p + L, n))
+        length, pos = find_longest_prefix(s, buffer, window, break_even)
+        if length is not None and length > break_even:
+            wl, wh = window
+            i = wh - wl - pos
+            d = length
+            c = s[p+d] if p+d < n else EOF
+        else:
+            i = 0
+            d = 0
+            c = s[p]
+
+        yield (i, d, c)
+        p += d + 1
 
 
 def deflate(s, W, L):
@@ -36,16 +58,15 @@ def inflate_to_tuples(b, W, L):
         if is_char:
             c = b[p:p+8].to01(); p += 8
             yield 0, 0, int(c, base=2)
-            continue
-
-        i = b[p:p+n].to01(); p += n  # pos
-        d = b[p:p+m].to01(); p += m  # length
-        c = b[p:p+8].to01(); p += 8  # char
-        yield (
-            int(i, base=2),
-            int(d, base=2),
-            int(c, base=2) if c else EOF,
-        )
+        else:
+            i = b[p:p+n].to01(); p += n  # pos
+            d = b[p:p+m].to01(); p += m  # length
+            c = b[p:p+8].to01(); p += 8  # char
+            yield (
+                int(i, base=2),
+                int(d, base=2),
+                int(c, base=2) if c else EOF,
+            )
 
 
 inflate = partial(inflate, method=inflate_to_tuples)

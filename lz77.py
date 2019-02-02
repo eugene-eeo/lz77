@@ -5,16 +5,16 @@ from bitarray import bitarray
 EOF = object()
 
 
-def find_longest_prefix(b, buff, wind):
+def find_longest_prefix(b, buff, wind, min_length=1):
     bl, bh = buff
     wl, wh = wind
     buffer = memoryview(b)[bl:bh]
     maxlen = min(bh - bl, wh - wl)
     lo = wl
-    for l in range(1, maxlen+1):
+    for l in range(min_length, maxlen+1):
         x = b.find(buffer[:l], lo, wh)
         if x == -1:
-            if l == 1:
+            if l == min_length:
                 break
             return l-1, b.rfind(buffer[:l-1], lo, wh) - wl
         lo = x
