@@ -49,13 +49,13 @@ def make_encoder(width):
 
 
 def deflate(s, W, L):
-    encode_i = make_encoder(bits_needed(W))
-    encode_d = make_encoder(bits_needed(L))
+    encode_d = make_encoder(bits_needed(W))
+    encode_l = make_encoder(bits_needed(L))
     encode_c = make_encoder(8)
     b = bitarray()
-    for i, d, c in encode_triplets(s, W, L):
-        b.extend(encode_i(i))
+    for d, l, c in encode_triplets(s, W, L):
         b.extend(encode_d(d))
+        b.extend(encode_l(l))
         if c is EOF:
             break
         b.extend(encode_c(c))
@@ -65,15 +65,15 @@ def deflate(s, W, L):
 def inflate_to_tuples(b, W, L):
     n = bits_needed(W)
     m = bits_needed(L)
-    p = 0
-    l = len(b)
-    while p < l:
-        i = b[p:p+n].to01(); p += n  # pos
-        d = b[p:p+m].to01(); p += m  # length
-        c = b[p:p+8].to01(); p += 8  # char
+    i = 0
+    B = len(b)
+    while i < B:
+        d = b[i:i+n].to01(); i += n  # distance
+        l = b[i:i+m].to01(); i += m  # length
+        c = b[i:i+8].to01(); i += 8  # char
         yield (
-            int(i, base=2),
             int(d, base=2),
+            int(l, base=2),
             int(c, base=2) if c else EOF,
         )
 
