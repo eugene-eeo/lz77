@@ -11,7 +11,7 @@ def encode_triplets(s, W, L):
     while p < n:
         window = (max(p - W, 0), p)
         buffer = (p, min(p + L, n))
-        l, d = find_longest_prefix(s, buffer, window, break_even)
+        d, l = find_longest_prefix(s, buffer, window, break_even)
         if l <= break_even:
             l = 0
             d = 0

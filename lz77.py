@@ -16,10 +16,10 @@ def find_longest_prefix(b, buff, wind, min_length=1):
         if x == -1:
             if l == min_length:
                 break
-            return l-1, wh - b.rfind(buffer[:l-1], lo, wh)
+            return wh - b.rfind(buffer[:l-1], lo, wh), l - 1
         lo = x
     else:
-        return maxlen, wh - b.rfind(buffer[:maxlen], lo, wh)
+        return wh - b.rfind(buffer[:maxlen], lo, wh), maxlen
     return 0, 0
 
 
@@ -29,7 +29,7 @@ def encode_triplets(s, W, L):
     while p < n:
         window = (max(p - W, 0), p)
         buffer = (p, min(p + L, n))
-        l, d = find_longest_prefix(s, buffer, window)
+        d, l = find_longest_prefix(s, buffer, window)
         try:
             c = s[p+l]
         except IndexError:
