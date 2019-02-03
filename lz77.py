@@ -16,11 +16,11 @@ def find_longest_prefix(b, buff, wind, min_length=1):
         if x == -1:
             if l == min_length:
                 break
-            return l-1, b.rfind(buffer[:l-1], lo, wh) - wl
+            return l-1, wh - b.rfind(buffer[:l-1], lo, wh)
         lo = x
     else:
-        return maxlen, b.rfind(buffer[:maxlen], lo, wh) - wl
-    return None, 0
+        return maxlen, wh - b.rfind(buffer[:maxlen], lo, wh)
+    return 0, 0
 
 
 def encode_triplets(s, W, L):
@@ -29,19 +29,13 @@ def encode_triplets(s, W, L):
     while p < n:
         window = (max(p - W, 0), p)
         buffer = (p, min(p + L, n))
-        length, pos = find_longest_prefix(s, buffer, window)
-        if length is not None:
-            wl, wh = window
-            i = wh - wl - pos
-            d = length
-            c = s[p+d] if p+d < n else EOF
-        else:
-            i = 0
-            d = 0
-            c = s[p]
-
-        yield (i, d, c)
-        p += d + 1
+        l, d = find_longest_prefix(s, buffer, window)
+        try:
+            c = s[p+l]
+        except IndexError:
+            c = EOF
+        yield (d, l, c)
+        p += l + 1
 
 
 def bits_needed(x):
@@ -87,10 +81,10 @@ def inflate_to_tuples(b, W, L):
 def inflate(b, W, L, method=inflate_to_tuples):
     length = 0
     output = b""
-    for i, d, c in method(b, W, L):
-        pos = length - i
-        output += output[pos:pos+d]
-        length += d
+    for d, l, c in method(b, W, L):
+        pos = length - d
+        output += output[pos:pos+l]
+        length += l
         if c is EOF:
             break
         output += bytes([c])

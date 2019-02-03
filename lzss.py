@@ -11,19 +11,16 @@ def encode_triplets(s, W, L):
     while p < n:
         window = (max(p - W, 0), p)
         buffer = (p, min(p + L, n))
-        length, pos = find_longest_prefix(s, buffer, window, break_even)
-        if length is not None and length > break_even:
-            wl, wh = window
-            i = wh - wl - pos
-            d = length
-            c = s[p+d] if p+d < n else EOF
-        else:
-            i = 0
+        l, d = find_longest_prefix(s, buffer, window, break_even)
+        if l <= break_even:
+            l = 0
             d = 0
-            c = s[p]
-
-        yield (i, d, c)
-        p += d + 1
+        try:
+            c = s[p+l]
+        except IndexError:
+            c = EOF
+        yield (d, l, c)
+        p += l + 1
 
 
 def deflate(s, W, L):
