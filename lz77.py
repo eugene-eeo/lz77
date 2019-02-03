@@ -79,14 +79,11 @@ def inflate_to_tuples(b, W, L):
 
 
 def inflate(b, W, L, method=inflate_to_tuples):
-    length = 0
-    output = b""
+    o = bytearray([])
     for d, l, c in method(b, W, L):
-        pos = length - d
-        output += output[pos:pos+l]
-        length += l
+        p = len(o) - d
+        o.extend(o[p:p+l])
         if c is EOF:
             break
-        output += bytes([c])
-        length += 1
-    return output
+        o.append(c)
+    return bytes(o)
