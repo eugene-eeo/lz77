@@ -10,17 +10,19 @@ def to_indices(data, max_length):
     d = {bytes([i]): i for i in range(256)}
     m = 8
     size = 2**m
+    stop = len(d) == max_length
 
     for ch in data:
         ch = bytes([ch])
         if s + ch in d:
             s += ch
         else:
-            if len(d) < max_length:
+            if not stop:
                 if len(d) == size:
                     m += 1
                     size *= 2
                 d[s+ch] = len(d)
+                stop = len(d) == max_length
             yield d[s], m
             s = ch
     yield d[s], m

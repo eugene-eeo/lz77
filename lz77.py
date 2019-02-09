@@ -9,12 +9,18 @@ def find_longest_match(s, w, b, min_length=1):
     wl, wh = w
     bl, bh = b
     buffer = memoryview(s)[bl:bh]
+    maxlen = min(bh - bl, bh - wl)
+    D = 0
+    L = 0
+    lo = wl
     # go from l,l-1,l-2,...,1
-    for l in range(bh - bl, min_length-1, -1):
-        i = s.find(buffer[:l], wl, bh)
-        if i != -1 and i < wh:
-            return wh - i, l
-    return 0, 0
+    for l in range(min_length, maxlen + 1):
+        lo = s.find(buffer[:l], lo, bh)
+        if lo == -1 or lo >= wh:
+            break
+        L = l
+        D = wh - lo
+    return D, L
 
 
 def encode_triplets(s, W, L):
@@ -24,10 +30,10 @@ def encode_triplets(s, W, L):
         window = (max(0, p-W), p)
         buffer = (p, min(p+L, n))
         d, l = find_longest_match(s, window, buffer)
-        try:
-            c = s[p+l]
-        except IndexError:
+        if p + l == n:
             c = EOF
+        else:
+            c = s[p+l]
         yield d, l, c
         p += l + 1
 

@@ -3,10 +3,10 @@ from time import time
 from lzw import decode, encode
 
 pairs = [
-    ['corpus/customer.xml', 'results/lzw-customer.csv'],
+    #['corpus/customer.xml', 'results/lzw-customer.csv'],
     ['corpus/bible.txt',    'results/lzw-bible.csv'],
     ['corpus/image.jpg',    'results/lzw-image.csv'],
-    ['corpus/zeros.txt',    'results/lzw-zeros.csv'],
+    #['corpus/zeros.txt',    'results/lzw-zeros.csv'],
 ]
 
 

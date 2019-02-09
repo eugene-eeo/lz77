@@ -12,10 +12,10 @@ def encode_triplets(s, W, L):
         window = (max(0, p-W), p)
         buffer = (p, min(p+L, n))
         d, l = find_longest_match(s, window, buffer, break_even)
-        try:
-            c = s[p+l]
-        except IndexError:
+        if p + l == n:
             c = EOF
+        else:
+            c = s[p+l]
         yield d, l, c
         p += l + 1
 
