@@ -49,8 +49,7 @@ def decode(data, max_length):
     p = 0
     m = 8 if max_length == 256 else 9
     d = {i: bytes([i]) for i in range(256)}
-    o = bytearray([])
-    t = b""
+    o = bytearray()
     w = b""
 
     c, p = get_next_code(data, p, m)
@@ -61,6 +60,8 @@ def decode(data, max_length):
     d_size = 256
 
     while p < n:
+        # if we need to increase the size of the dictionary and
+        # we can (max length bound) then m++
         if d_size+1 == size and d_size+1 < max_length:
             size *= 2
             m += 1

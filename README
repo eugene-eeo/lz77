@@ -1,3 +1,22 @@
+Requires Python 3.
+
+Install + Usage example:
+
+    $ pip install bitarray==0.8.3
+    $ python
+    >>> from lz77 import deflate, inflate
+    >>> x = deflate(b'abracadabra', 100, 100)
+    >>> inflate(x, 100, 100)
+    b'abracadabra'
+
+    >>> from lzw import encode, decode
+    >>> x = encode(b'abracadabra', 4096)
+    >>> decode(x, 4096)
+    b'abracadabra'
+
+
+
+
 lz77.py
 =======
 
@@ -20,6 +39,8 @@ lz77.py
 The lzss.py module has completely the same interface, but implements
 LZSS instead.
 
+
+
 lzw.py
 ======
 
@@ -38,16 +59,3 @@ lzw.py
     same as those provided to encode.
 
 
-Install + Usage example:
-
-    $ pip install bitarray==0.8.3
-    $ python
-    >>> from lz77 import deflate, inflate
-    >>> x = deflate(b'abracadabra', 100, 100)
-    >>> inflate(x, 100, 100)
-    b'abracadabra'
-
-    >>> from lzw import encode, decode
-    >>> x = encode(b'abracadabra', 4096)
-    >>> decode(x, 4096)
-    b'abracadabra'
