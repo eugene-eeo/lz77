@@ -1,12 +1,12 @@
 import csv
 from time import time
-from lzss import inflate, deflate
+from lz77 import inflate, deflate
 
 pairs = [
-    #['corpus/customer.xml', 'results/lzss-customer.csv'],
-    ['corpus/bible.txt',    'results/lzss-bible.csv'],
-    ['corpus/image.jpg',    'results/lzss-image.csv'],
-    #['corpus/zeros.txt',    'results/lzss-zeros.csv'],
+    ['corpus/customer.xml', 'results/customer.csv'],
+    ['corpus/bible.txt',    'results/bible.csv'],
+    ['corpus/image.jpg',    'results/image.csv'],
+    ['corpus/zeros.txt',    'results/zeros.csv'],
 ]
 
 

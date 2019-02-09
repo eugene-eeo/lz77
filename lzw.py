@@ -41,14 +41,13 @@ def inflate_to_indices(data, max_length):
 
 def decode(data, max_length=4096):
     codes = inflate_to_indices(data, max_length)
-    output = b""
-
+    o = bytearray([])
     d = {i: bytes([i]) for i in range(256)}
     t = b""
     w = b""
 
     w = d[next(codes)]
-    output += w
+    o.extend(w)
 
     for code in codes:
         if code in d:
@@ -58,6 +57,5 @@ def decode(data, max_length=4096):
         else:
             d[len(d)] = w + w[:1]
             w = d[code]
-        output += w
-
-    return output
+        o.extend(w)
+    return bytes(o)

@@ -9,10 +9,10 @@ W = [2**i-1 for i in [16]]
 L = [2**i-1 for i in [8]]
 
 pairs = [
-    ['corpus/customer.xml', 'results/customer.csv'],
-    ['corpus/bible.txt', 'results/bible.csv'],
-    ['corpus/image.jpg', 'results/image.csv'],
-    ['corpus/zeros.txt', 'results/zeros.csv'],
+    ['corpus/customer.xml', 'results/lz77-runtime-customer.csv'],
+    ['corpus/bible.txt', 'results/lz77-runtime-bible.csv'],
+    ['corpus/image.jpg', 'results/lz77-runtime-image.csv'],
+    ['corpus/zeros.txt', 'results/lz77-runtime-zeros.csv'],
 ]
 
 for input_file, results_file in pairs:
