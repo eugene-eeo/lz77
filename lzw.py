@@ -8,54 +8,70 @@ def to_indices(data, max_length):
 
     s = b""
     d = {bytes([i]): i for i in range(256)}
+    m = 8
+    size = 2**m
 
     for ch in data:
         ch = bytes([ch])
         if s + ch in d:
             s += ch
         else:
-            yield d[s]
             if len(d) < max_length:
+                if len(d) == size:
+                    m += 1
+                    size *= 2
                 d[s+ch] = len(d)
+            yield d[s], m
             s = ch
-    yield d[s]
+    yield d[s], m
 
 
 def encode(data, max_length=4096):
-    e = make_encoder(bits_needed(max_length))
+    m = 8
+    e = make_encoder(8)
     b = bitarray()
-    for x in to_indices(data, max_length):
+    for x, bits in to_indices(data, max_length):
+        if bits != m:
+            m = bits
+            e = make_encoder(bits)
         b.extend(e(x))
     return b
 
 
-def inflate_to_indices(data, max_length):
-    m = bits_needed(max_length)
-    p = 0
+def get_next_code(data, p, m):
+    curr = int(data[p:p+m].to01(), base=2)
+    p += m
+    return curr, p
+
+
+def decode(data, max_length):
     n = len(data)
-    while p < n:
-        curr = int(data[p:p+m].to01(), base=2)
-        p += m
-        yield curr
-
-
-def decode(data, max_length=4096):
-    codes = inflate_to_indices(data, max_length)
-    o = bytearray([])
+    p = 0
+    m = 8 if max_length == 256 else 9
     d = {i: bytes([i]) for i in range(256)}
+    o = bytearray([])
     t = b""
     w = b""
 
-    w = d[next(codes)]
+    c, p = get_next_code(data, p, m)
+    w = d[c]
     o.extend(w)
 
-    for code in codes:
+    size = 2**m
+    d_size = 256
+
+    while p < n:
+        if d_size+1 == size and d_size+1 < max_length:
+            size *= 2
+            m += 1
+        code, p = get_next_code(data, p, m)
         if code in d:
             t = w
             w = d[code]
-            d[len(d)] = t + w[:1]
+            d[d_size] = t + w[:1]
         else:
-            d[len(d)] = w + w[:1]
+            d[d_size] = w + w[:1]
             w = d[code]
         o.extend(w)
+        d_size += 1
     return bytes(o)

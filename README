@@ -48,6 +48,6 @@ Install + Usage example:
     b'abracadabra'
 
     >>> from lzw import encode, decode
-    >>> x = encode(b'abracadabra', 100, 100)
-    >>> decode(x, 100, 100)
+    >>> x = encode(b'abracadabra', 4096)
+    >>> decode(x, 4096)
     b'abracadabra'
