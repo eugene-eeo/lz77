@@ -5,25 +5,19 @@ from lz77 import bits_needed, find_longest_match, EOF, make_encoder, inflate
 
 
 def encode_triplets(s, W, L):
-    break_even = bits_needed(W + 1)
-    window = b""
-    while s:
-        buffer = s[:L]
-        d, l = find_longest_match(window, buffer)
-        if d > 0:
-            if l <= break_even:
-                for i in range(l):
-                    yield 0, 0, s[i]
-                window = (window + s[:l])[-W:]
-                s = s[l:]
-                continue
-            c = s[l] if len(s) > l else EOF
-        else:
-            c = s[0]
-
+    break_even = (bits_needed(W + 1) + bits_needed(L + 1)) // 8 + 1
+    p = 0
+    n = len(s)
+    while p < n:
+        window = (max(0, p-W), p)
+        buffer = (p, min(p+L, n))
+        d, l = find_longest_match(s, window, buffer, break_even)
+        try:
+            c = s[p+l]
+        except IndexError:
+            c = EOF
         yield d, l, c
-        window = (window + s[:l+1])[-W:]
-        s = s[l+1:]
+        p += l + 1
 
 
 def deflate(s, W, L):

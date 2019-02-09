@@ -5,29 +5,31 @@ from bitarray import bitarray
 EOF = object()
 
 
-def find_longest_match(w, b):
-    u = w + b
+def find_longest_match(s, w, b, min_length=1):
+    wl, wh = w
+    bl, bh = b
+    buffer = memoryview(s)[bl:bh]
     # go from l,l-1,l-2,...,1
-    for l in range(len(b), 0, -1):
-        i = u.find(b[:l])
-        if i != -1 and i < len(w):
-            return len(w) - i, l
+    for l in range(bh - bl, min_length-1, -1):
+        i = s.find(buffer[:l], wl, bh)
+        if i != -1 and i < wh:
+            return wh - i, l
     return 0, 0
 
 
 def encode_triplets(s, W, L):
-    window = b""
-    while s:
-        buffer = s[:L]
-        d, l = find_longest_match(window, buffer)
-        if d > 0:
-            c = s[l] if len(s) > l else EOF
-        else:
-            c = s[0]
-
+    p = 0
+    n = len(s)
+    while p < n:
+        window = (max(0, p-W), p)
+        buffer = (p, min(p+L, n))
+        d, l = find_longest_match(s, window, buffer)
+        try:
+            c = s[p+l]
+        except IndexError:
+            c = EOF
         yield d, l, c
-        window = (window + s[:l+1])[-W:]
-        s = s[l+1:]
+        p += l + 1
 
 
 def bits_needed(x):
@@ -71,18 +73,14 @@ def inflate_to_tuples(b, W, L):
 
 
 def inflate(b, W, L, method=inflate_to_tuples):
-    o = bytearray([])
+    o = bytearray()
     for d, l, c in method(b, W, L):
         p = len(o) - d
         if l > d:
             w = o[-d:]
-            k = l
-            i = 0
-            while k > 0:
-                o.append(w[i])
-                k -= 1
-                i += 1
-                i %= d
+            for _ in range(l // d):
+                o.extend(w)
+            o.extend(w[:l % d])
         else:
             o.extend(o[p:p+l])
         if c is EOF:
