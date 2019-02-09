@@ -1,6 +1,7 @@
 import pytest
 import lz77
 import lzss
+import lzw
 
 
 abracadabra = "abracadabra"
@@ -59,3 +60,17 @@ def test_inflate_deflate_lz77_values(impl, x):
     ])
 def test_inflate_deflate_corpus(impl, b, W=255, L=255):
     assert impl.inflate(impl.deflate(b, W, L), W, L) == b
+
+
+@pytest.mark.parametrize("x", corpus + [
+    open("corpus/mini-beers.txt", "rb").read(),
+    open("corpus/mini-names.txt", "rb").read(),
+    open("corpus/beers.txt", "rb").read(),
+    open("corpus/names.txt", "rb").read(),
+    ])
+@pytest.mark.parametrize("W", [256, 512, 1024, 2048, 4096, 8192])
+def test_lzw(x, W):
+    b = x
+    if hasattr(x, 'encode'):
+        b = x.encode("ascii")
+    assert lzw.decode(lzw.encode(b, W), W) == b

@@ -7,7 +7,7 @@ from lz77 import bits_needed, find_longest_prefix, EOF, make_encoder, inflate
 def encode_triplets(s, W, L):
     p = 0
     n = len(s)
-    break_even = (bits_needed(L) + bits_needed(W)) // 8 + 1
+    break_even = (bits_needed(L+1) + bits_needed(W+1)) // 8 + 1
     while p < n:
         window = (max(p - W, 0), p)
         buffer = (p, min(p + L, n))
@@ -24,8 +24,8 @@ def encode_triplets(s, W, L):
 
 
 def deflate(s, W, L):
-    encode_i = make_encoder(bits_needed(W))
-    encode_d = make_encoder(bits_needed(L))
+    encode_i = make_encoder(bits_needed(W + 1))
+    encode_d = make_encoder(bits_needed(L + 1))
     encode_c = make_encoder(8)
     b = bitarray()
     for i, d, c in encode_triplets(s, W, L):
@@ -46,8 +46,8 @@ def deflate(s, W, L):
 
 
 def inflate_to_tuples(b, W, L):
-    n = bits_needed(W)
-    m = bits_needed(L)
+    n = bits_needed(W + 1)
+    m = bits_needed(L + 1)
     p = 0
     l = len(b)
     while p < l:

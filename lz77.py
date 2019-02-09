@@ -39,7 +39,7 @@ def encode_triplets(s, W, L):
 
 
 def bits_needed(x):
-    return int(math.ceil(math.log2(1 + x)))
+    return int(math.ceil(math.log2(x)))
 
 
 def make_encoder(width):
@@ -49,8 +49,8 @@ def make_encoder(width):
 
 
 def deflate(s, W, L):
-    encode_d = make_encoder(bits_needed(W))
-    encode_l = make_encoder(bits_needed(L))
+    encode_d = make_encoder(bits_needed(W + 1))
+    encode_l = make_encoder(bits_needed(L + 1))
     encode_c = make_encoder(8)
     b = bitarray()
     for d, l, c in encode_triplets(s, W, L):
@@ -63,8 +63,8 @@ def deflate(s, W, L):
 
 
 def inflate_to_tuples(b, W, L):
-    n = bits_needed(W)
-    m = bits_needed(L)
+    n = bits_needed(W + 1)
+    m = bits_needed(L + 1)
     i = 0
     B = len(b)
     while i < B:
