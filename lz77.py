@@ -5,37 +5,29 @@ from bitarray import bitarray
 EOF = object()
 
 
-def find_longest_prefix(b, buff, wind, min_length=1):
-    bl, bh = buff
-    wl, wh = wind
-    buffer = memoryview(b)[bl:bh]
-    maxlen = min(bh - bl, wh - wl)
-    lo = wl
-    for l in range(min_length, maxlen+1):
-        x = b.find(buffer[:l], lo, wh)
-        if x == -1:
-            if l == min_length:
-                break
-            return wh - b.rfind(buffer[:l-1], lo, wh), l - 1
-        lo = x
-    else:
-        return wh - b.rfind(buffer[:maxlen], lo, wh), maxlen
+def find_longest_match(w, b):
+    u = w + b
+    # go from l,l-1,l-2,...,1
+    for l in range(len(b), 0, -1):
+        i = u.find(b[:l])
+        if i != -1 and i < len(w):
+            return len(w) - i, l
     return 0, 0
 
 
 def encode_triplets(s, W, L):
-    p = 0
-    n = len(s)
-    while p < n:
-        window = (max(p - W, 0), p)
-        buffer = (p, min(p + L, n))
-        d, l = find_longest_prefix(s, buffer, window)
-        try:
-            c = s[p+l]
-        except IndexError:
-            c = EOF
-        yield (d, l, c)
-        p += l + 1
+    window = b""
+    while s:
+        buffer = s[:L]
+        d, l = find_longest_match(window, buffer)
+        if d > 0:
+            c = s[l] if len(s) > l else EOF
+        else:
+            c = s[0]
+
+        yield d, l, c
+        window = (window + s[:l+1])[-W:]
+        s = s[l+1:]
 
 
 def bits_needed(x):
@@ -82,7 +74,17 @@ def inflate(b, W, L, method=inflate_to_tuples):
     o = bytearray([])
     for d, l, c in method(b, W, L):
         p = len(o) - d
-        o.extend(o[p:p+l])
+        if l > d:
+            w = o[-d:]
+            k = l
+            i = 0
+            while k > 0:
+                o.append(w[i])
+                k -= 1
+                i += 1
+                i %= d
+        else:
+            o.extend(o[p:p+l])
         if c is EOF:
             break
         o.append(c)
