@@ -3,10 +3,8 @@ from time import time
 from lz77 import inflate, deflate
 
 pairs = [
-    ['corpus/customer.xml', 'results/customer.csv'],
     ['corpus/bible.txt',    'results/bible.csv'],
     ['corpus/image.jpg',    'results/image.csv'],
-    ['corpus/zeros.txt',    'results/zeros.csv'],
 ]
 
 

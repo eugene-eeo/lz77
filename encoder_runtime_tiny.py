@@ -2,25 +2,26 @@ import csv
 import time
 from lz77 import deflate, inflate
 
-W = [31, 63, 127, 255]
+W = [1, 15, 63, 255]
 L = 255
-n = 100
+n = 10000
 
 out = csv.writer(open("results/tiny.csv", mode="w"))
-out.writerow(["Name", "W", "Compression Ratio", "Encode Time", "Decode Time"])
+out.writerow(["n-rep", "W", "Compression Ratio", "Encode Time", "Decode Time"])
 
-for name in [
-        "tiny-zero",
-        "tiny-2",
-        "tiny-4",
-        "tiny-8",
-        "tiny-16",
-        "tiny-32",
-        "tiny-64",
-        "tiny-128",
-        "uniq",
+for nrep, name in [
+        [256, "tiny-zero"],
+        [128, "tiny-2"],
+        [64,  "tiny-4"],
+        [32,  "tiny-8"],
+        [16,  "tiny-16"],
+        [8,   "tiny-32"],
+        [4,   "tiny-64"],
+        [2,   "tiny-128"],
+        [1,   "uniq"],
         ]:
     b = open(f"corpus/{name}.txt", mode="rb").read()
+    print(nrep, name)
     for w in W:
         deflate_total = 0
         inflate_total = 0
@@ -35,7 +36,7 @@ for name in [
             inflate_total += inflate_t1 - inflate_t0
         x.fill()
         out.writerow([
-            name,
+            nrep,
             w,
             (len(x) // 8) / len(b),
             deflate_total / n,
