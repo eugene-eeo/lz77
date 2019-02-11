@@ -6,11 +6,15 @@ Install + Usage example:
     $ python
     >>> from lz77 import deflate, inflate
     >>> x = deflate(b'abracadabra', 100, 100)
+    >>> x
+    bitarray(...)
     >>> inflate(x, 100, 100)
     b'abracadabra'
 
     >>> from lzw import encode, decode
     >>> x = encode(b'abracadabra', 4096)
+    >>> x
+    bitarray(...)
     >>> decode(x, 4096)
     b'abracadabra'
 
