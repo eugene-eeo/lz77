@@ -56,6 +56,6 @@ lzw.py
     ---------------------
     Takes in an LZW-encoded bitarray b and decodes it into the
     original byte-string. The max_length parameter must be the
-    same as those provided to encode.
+    same as provided to encode.
 
 
