@@ -10,7 +10,7 @@ def to_indices(data, max_length):
     d = {bytes([i]): i for i in range(256)}
     m = 8
     size = 2**m
-    stop = len(d) == max_length
+    stop = max_length == 256
 
     for ch in data:
         ch = bytes([ch])
