@@ -9,11 +9,10 @@ def find_longest_match(s, w, b, min_length=1):
     wl, wh = w
     bl, bh = b
     buffer = memoryview(s)[bl:bh]
-    maxlen = min(bh - bl, bh - wl)
     I = wh
     L = 0
     lo = wl
-    for l in range(min_length, maxlen + 1):
+    for l in range(min_length, bh - bl + 1):
         lo = s.find(buffer[:l], lo, bh)
         if lo == -1 or lo >= wh:
             break

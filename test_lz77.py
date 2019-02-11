@@ -62,15 +62,25 @@ def test_inflate_deflate_corpus(impl, b, W=255, L=255):
     assert impl.inflate(impl.deflate(b, W, L), W, L) == b
 
 
+@pytest.mark.parametrize("W", [2**i for i in range(8, 33)])
 @pytest.mark.parametrize("x", corpus + [
     open("corpus/mini-beers.txt", "rb").read(),
     open("corpus/mini-names.txt", "rb").read(),
     open("corpus/beers.txt", "rb").read(),
     open("corpus/names.txt", "rb").read(),
     ])
-@pytest.mark.parametrize("W", [2**i for i in range(8, 20)])
 def test_lzw(x, W):
     b = x
     if hasattr(x, 'encode'):
         b = x.encode("ascii")
     assert lzw.decode(lzw.encode(b, W), W) == b
+
+
+def test_encode_triplets():
+    assert [(d,l,chr(c)) for d,l,c in lz77.encode_triplets(b"aacaacabcabaaac", 6, 4)] == [
+            (0, 0, 'a'),
+            (1, 1, 'c'),
+            (3, 4, 'b'),
+            (3, 3, 'a'),
+            (1, 2, 'c'),
+        ]
