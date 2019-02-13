@@ -65,14 +65,16 @@ def inflate_to_tuples(b, W, L):
     m = bits_needed(L + 1)
     i = 0
     B = len(b)
-    while i < B:
+    N = B - n - m
+    # rewrite B - i >= n + m
+    while i <= N:
         d = b[i:i+n].to01(); i += n  # distance
         l = b[i:i+m].to01(); i += m  # length
         c = b[i:i+8].to01(); i += 8  # char
         yield (
             int(d, base=2),
             int(l, base=2),
-            int(c, base=2) if c else EOF,
+            int(c, base=2) if i <= B else EOF,
         )
 
 

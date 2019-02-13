@@ -61,7 +61,7 @@ def decode(data, max_length):
     size = 2**m
     d_size = 256
 
-    while p < n:
+    while n - p >= m:
         # if we need to increase the size of the dictionary and
         # we can (max length bound) then m++
         if d_size+1 == size and d_size+1 < max_length:

@@ -18,6 +18,13 @@ Install + Usage example:
     >>> decode(x, 4096)
     b'abracadabra'
 
+    >>> # save to file
+    >>> x = encode(b'...', 4096)
+    >>> x.tofile(open('filename', mode='wb'))
+    >>> u = bitarray()
+    >>> u.fromfile(open('filename', mode='rb'))
+    >>> decode(u, 4096)
+
 
 
 

@@ -45,21 +45,24 @@ def deflate(s, W, L):
 def inflate_to_tuples(b, W, L):
     n = bits_needed(W + 1)
     m = bits_needed(L + 1)
-    p = 0
-    l = len(b)
-    while p < l:
-        is_char = b[p]; p += 1 # is_char
+    i = 0
+    B = len(b)
+    N = B - n - m
+    while i < B:
+        is_char = b[i]; i += 1 # is_char
         if is_char:
-            c = b[p:p+8].to01(); p += 8
+            c = b[i:i+8].to01(); i += 8
             yield 0, 0, int(c, base=2)
         else:
-            i = b[p:p+n].to01(); p += n  # pos
-            d = b[p:p+m].to01(); p += m  # length
-            c = b[p:p+8].to01(); p += 8  # char
+            if i > N:
+                return
+            d = b[i:i+n].to01(); i += n  # pos
+            l = b[i:i+m].to01(); i += m  # length
+            c = b[i:i+8].to01(); i += 8  # char
             yield (
-                int(i, base=2),
                 int(d, base=2),
-                int(c, base=2) if c else EOF,
+                int(l, base=2),
+                int(c, base=2) if i <= B else EOF,
             )
 
 

@@ -42,7 +42,9 @@ corpus = [abracadabra, peter, shell, text]
 @pytest.mark.parametrize("L", [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 100, 127, 255, 511])
 def test_inflate_deflate(impl, x, W, L):
     b = x.encode('ascii')
-    assert impl.inflate(impl.deflate(b, W, L), W, L) == b
+    u = impl.deflate(b, W, L)
+    u.fill()
+    assert impl.inflate(u, W, L) == b
 
 
 @pytest.mark.parametrize("impl", [lz77, lzss])
@@ -73,7 +75,9 @@ def test_lzw(x, W):
     b = x
     if hasattr(x, 'encode'):
         b = x.encode("ascii")
-    assert lzw.decode(lzw.encode(b, W), W) == b
+    u = lzw.encode(b, W)
+    u.fill()
+    assert lzw.decode(u, W) == b
 
 
 def test_encode_triplets():
