@@ -1,5 +1,6 @@
 Requires Python 3.
 
+Note: all Python files need to be in the same directory.
 Install + Usage example:
 
     $ pip install bitarray==0.8.3
@@ -24,6 +25,14 @@ Install + Usage example:
     >>> u = bitarray()
     >>> u.fromfile(open('filename', mode='rb'))
     >>> decode(u, 4096)
+
+There's also a compress utility to use the different algorithms;
+(It's only tested on Linux):
+
+    $ ./compress lzw encode 4096 /path/to/input /path/to/output
+    $ ./compress lzw decode 4096 /path/to/input /path/to/output
+    $ ./compress lz77 encode 255 511 /path/to/input /path/to/output
+    $ ./compress lz77 decode 255 511 /path/to/input /path/to/output
 
 
 
