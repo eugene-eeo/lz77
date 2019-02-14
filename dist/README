@@ -1,0 +1,81 @@
+Requires Python 3.
+
+Note: all Python files need to be in the same directory.
+Install + Usage example:
+
+    $ pip install bitarray==0.8.3
+    $ python
+    >>> from lz77 import deflate, inflate
+    >>> x = deflate(b'abracadabra', 100, 100)
+    >>> x
+    bitarray(...)
+    >>> inflate(x, 100, 100)
+    b'abracadabra'
+
+    >>> from lzw import encode, decode
+    >>> x = encode(b'abracadabra', 4096)
+    >>> x
+    bitarray(...)
+    >>> decode(x, 4096)
+    b'abracadabra'
+
+    >>> # save to file
+    >>> x = encode(b'...', 4096)
+    >>> x.tofile(open('filename', mode='wb'))
+    >>> u = bitarray()
+    >>> u.fromfile(open('filename', mode='rb'))
+    >>> decode(u, 4096)
+
+There's also a compress utility to use the different algorithms;
+(It's only tested on Linux):
+
+    $ ./compress lzw encode 4096 /path/to/input /path/to/output
+    $ ./compress lzw decode 4096 /path/to/input /path/to/output
+    $ ./compress lz77 encode 255 511 /path/to/input /path/to/output
+    $ ./compress lz77 decode 255 511 /path/to/input /path/to/output
+
+
+
+
+lz77.py
+=======
+
+2 main functions:
+
+    deflate(b, W, L)
+    ----------------
+    Takes in a byte string b and encodes it using LZ77 with
+    window size W and lookahead-buffer of size L. Returns a
+    bitarray.
+
+
+    inflate(b, W, L)
+    ----------------
+    Takes in an LZ77-encoded bitarray b and decodes it into the
+    original byte-string. The W and L parameters must be the
+    same as those provided to deflate.
+
+
+The lzss.py module has completely the same interface, but implements
+LZSS instead.
+
+
+
+lzw.py
+======
+
+    encode(b, max_length)
+    ---------------------
+    Takes in a byte string b and encodes it using LZW with
+    max dictionary size max_length. Max length should be >= 256.
+    If max_length == 256 then no compression is performed.
+    Returns a bit-array.
+
+
+    decode(b, max_length)
+    ---------------------
+    Takes in an LZW-encoded bitarray b and decodes it into the
+    original byte-string. The max_length parameter must be the
+    same as provided to encode.
+
+

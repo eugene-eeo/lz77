@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+"""
+usage:
+    compress (lz77|lzss) (encode|decode) <W> <L> <filename> <output>
+    compress lzw (encode|decode) <W> <filename> <output>
+"""
+
+import sys
+from bitarray import bitarray
+import lz77
+import lzss
+import lzw
+
+
+class UsageError(Exception):
+    pass
+
+
+def main():
+    args = sys.argv[1:]
+    if len(args) < 5:
+        raise UsageError
+    try:
+        impl = {
+            "lz77": lz77,
+            "lzss": lzss,
+            "lzw":  lzw,
+        }[args[0]]
+    except KeyError:
+        raise UsageError
+
+    if args[1] not in ("encode", "decode"):
+        raise UsageError
+
+    if impl is lzw:
+        if len(args) != 5:
+            raise UsageError
+
+        action, w, src, dst = args[1:]
+        w = int(w)
+        if action == "encode":
+            with open(dst, mode="wb") as ofp:
+                with open(src, mode="rb") as ifp:
+                    b = lzw.encode(ifp.read(), w)
+                    b.tofile(ofp)
+        elif action == "decode":
+            with open(dst, mode="wb") as ofp:
+                with open(src, mode="rb") as ifp:
+                    x = bitarray()
+                    x.fromfile(ifp)
+                    ofp.write(lzw.decode(x, w))
+
+    else:
+        if len(args) != 6:
+            raise UsageError
+
+        action, w, l, src, dst = args[1:]
+        w = int(w)
+        l = int(l)
+        if action == "encode":
+            with open(dst, mode="wb") as ofp:
+                with open(src, mode="rb") as ifp:
+                    b = impl.deflate(ifp.read(), w, l)
+                    b.tofile(ofp)
+        elif action == "decode":
+            with open(dst, mode="wb") as ofp:
+                with open(src, mode="rb") as ifp:
+                    x = bitarray()
+                    x.fromfile(ifp)
+                    ofp.write(impl.inflate(x, w, l))
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except UsageError:
+        print(__doc__, file=sys.stderr)
+        exit(1)
